@@ -20,12 +20,14 @@ namespace FluentNHibernate.Mapping
         private readonly AttributeStore<ManyToOneMapping> attributes = new AttributeStore<ManyToOneMapping>();
         private readonly AttributeStore<ColumnMapping> columnAttributes = new AttributeStore<ColumnMapping>();
         private readonly Type entity;
-        private readonly PropertyInfo property;
+        private readonly string name;
+        private readonly string declaringTypeName;
 
-        public ManyToOnePart(Type entity, PropertyInfo property) 
+        public ManyToOnePart(Type entity, string name, string declaringTypeName) 
         {
             this.entity = entity;
-            this.property = property;
+            this.name = name;
+            this.declaringTypeName = declaringTypeName;
             access = new AccessStrategyBuilder<ManyToOnePart<TOther>>(this, value => attributes.Set(x => x.Access, value));
             fetch = new FetchTypeExpression<ManyToOnePart<TOther>>(this, value => attributes.Set(x => x.Fetch, value));
             cascade = new CascadeExpression<ManyToOnePart<TOther>>(this, value => attributes.Set(x => x.Cascade, value));
@@ -37,16 +39,15 @@ namespace FluentNHibernate.Mapping
             var mapping = new ManyToOneMapping(attributes.CloneInner());
 
             mapping.ContainingEntityType = entity;
-            mapping.PropertyInfo = property;
 
             if (!mapping.IsSpecified("Name"))
-                mapping.Name = property.Name;
+                mapping.Name = name;
 
             if (!mapping.IsSpecified("Class"))
                 mapping.SetDefaultValue(x => x.Class, new TypeReference(typeof(TOther)));
 
             if (columns.Count == 0)
-                mapping.AddDefaultColumn(CreateColumn(property.Name + "_id"));
+                mapping.AddDefaultColumn(CreateColumn(name + "_id"));
 
             foreach (var column in columns)
             {
@@ -124,7 +125,7 @@ namespace FluentNHibernate.Mapping
 		
 		public ManyToOnePart<TOther> ForeignKey()
 		{
-			return ForeignKey(string.Format("FK_{0}To{1}", property.DeclaringType.Name, property.Name));
+            return ForeignKey(string.Format("FK_{0}To{1}", declaringTypeName, name));
 		}
 		
 		public ManyToOnePart<TOther> ForeignKey(string foreignKeyName)

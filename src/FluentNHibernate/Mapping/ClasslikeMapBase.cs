@@ -64,7 +64,11 @@ namespace FluentNHibernate.Mapping
 
         protected virtual ManyToOnePart<TOther> References<TOther>(PropertyInfo property, string columnName)
         {
-            var part = new ManyToOnePart<TOther>(EntityType, property);
+            return References<TOther>(property.DeclaringType, property.Name, columnName);
+        }
+
+        public ManyToOnePart<TOther> References<TOther>(Type declaringType, string propertyName, string columnName) {
+            var part = new ManyToOnePart<TOther>(EntityType, propertyName, declaringType.Name);
 
             if (columnName != null)
                 part.Column(columnName);
