@@ -123,7 +123,7 @@ namespace FluentNHibernate.Testing.FluentInterfaceTests
 
         protected ModelTester<ManyToOnePart<PropertyReferenceTarget>, ManyToOneMapping> ManyToOne()
         {
-            return new ModelTester<ManyToOnePart<PropertyReferenceTarget>, ManyToOneMapping>(() => new ManyToOnePart<PropertyReferenceTarget>(typeof(PropertyTarget), ReflectionHelper.GetProperty<PropertyTarget>(x => x.Reference)), x => ((IManyToOneMappingProvider)x).GetManyToOneMapping());
+            return new ModelTester<ManyToOnePart<PropertyReferenceTarget>, ManyToOneMapping>(() => new ManyToOnePart<PropertyReferenceTarget>(typeof(PropertyTarget), "Reference", typeof(PropertyTarget).Name), x => ((IManyToOneMappingProvider)x).GetManyToOneMapping());
         }
 
         protected ModelTester<AnyPart<T>, AnyMapping> Any<T>()
